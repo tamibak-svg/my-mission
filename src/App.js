@@ -1,45 +1,67 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+
+const SYSTEMS = [
+  { key: "tasks", label: "משימות" },
+  { key: "reminders", label: "תזכורות" },
+  { key: "shopping", label: "רכישות" },
+  { key: "books", label: "ספרים" },
+];
+
+const STORAGE_KEY = "selectedSystem";
 
 function App() {
-  const [tasks, setTasks] = useState([]);
-  const [input, setInput] = useState("");
+  const [system, setSystem] = useState(null);
+  const validKeys = SYSTEMS.map((s) => s.key);
 
-  // טעינה ראשונית מה־LocalStorage
+  // טעינה פעם אחת
   useEffect(() => {
-    const savedTasks = localStorage.getItem("tasks");
-    if (savedTasks) {
-      setTasks(JSON.parse(savedTasks));
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved && validKeys.includes(saved)) {
+      setSystem(saved);
     }
   }, []);
 
-  // שמירה ל־LocalStorage בכל שינוי
+  // שמירה רק אם הערך תקין
   useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks]);
+    if (system && validKeys.includes(system)) {
+      localStorage.setItem(STORAGE_KEY, system);
+    }
+  }, [system]);
 
-  const addTask = () => {
-    if (input.trim() === "") return;
-    setTasks([...tasks, input]);
-    setInput("");
+  const goBack = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    setSystem(null);
   };
 
+  if (!system) {
+    return (
+      <div style={{ padding: 40, fontFamily: "Arial" }}>
+        <h1>My Mission</h1>
+        <p>בחר מערכת:</p>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 240 }}>
+          {SYSTEMS.map((s) => (
+            <button
+              key={s.key}
+              onClick={() => setSystem(s.key)}
+              style={{ padding: 10 }}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div style={{ padding: 20 }}>
-      <h1>אפליקציית משימות</h1>
+    <div style={{ padding: 40, fontFamily: "Arial" }}>
+      <h1>מערכת: {system}</h1>
+      <p>רענון דף אמור להשאיר אותך פה ✅</p>
 
-      <input
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="כתוב משימה"
-      />
-
-      <button onClick={addTask}>הוסף</button>
-
-      <ul>
-        {tasks.map((task, index) => (
-          <li key={index}>{task}</li>
-        ))}
-      </ul>
+      <button onClick={goBack} style={{ padding: 10 }}>
+        חזרה
+      </button>
     </div>
   );
 }
