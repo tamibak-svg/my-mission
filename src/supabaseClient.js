@@ -3,8 +3,12 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
 const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
 
-// לא ליצור client אם חסר env (כדי שלא יקרוס)
+export const envStatus = {
+  hasUrl: !!supabaseUrl,
+  hasKey: !!supabaseAnonKey,
+};
+
 export const supabase =
-  supabaseUrl && supabaseAnonKey
+  envStatus.hasUrl && envStatus.hasKey
     ? createClient(supabaseUrl, supabaseAnonKey)
     : null;

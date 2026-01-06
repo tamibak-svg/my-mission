@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "./supabaseClient";
+import { supabase, envStatus } from "./supabaseClient";
 
 // ===== Storage keys =====
 const SYSTEMS_KEY = "systemsList";
@@ -34,6 +34,9 @@ function makeKeyFromLabel(label) {
 }
 
 export default function App() {
+  
+console.log("URL?", process.env.REACT_APP_SUPABASE_URL);
+console.log("KEY?", process.env.REACT_APP_SUPABASE_ANON_KEY);
   // screens: home / work / admin
   const [mode, setMode] = useState("home");
 
