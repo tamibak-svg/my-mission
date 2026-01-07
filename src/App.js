@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
 import { supabase, envStatus } from "./supabaseClient";
+import { useEffect, useMemo, useState } from "react";
 
 // ===== Storage keys =====
 const SYSTEMS_KEY = "systemsList";
@@ -35,10 +35,9 @@ function makeKeyFromLabel(label) {
 
 export default function App() {
   
-console.log("URL?", process.env.REACT_APP_SUPABASE_URL);
-console.log("KEY?", process.env.REACT_APP_SUPABASE_ANON_KEY);
   // screens: home / work / admin
   const [mode, setMode] = useState("home");
+  
 
   // systems (categories)
   const [systems, setSystems] = useState(DEFAULT_SYSTEMS);
@@ -56,6 +55,7 @@ console.log("KEY?", process.env.REACT_APP_SUPABASE_ANON_KEY);
   const [itemTitle, setItemTitle] = useState("");
   const [loadingItems, setLoadingItems] = useState(false);
   const [cloudError, setCloudError] = useState("");
+
 
   const systemLabel =
     system ? systems.find((s) => s.key === system)?.label || system : "";
@@ -248,6 +248,7 @@ console.log("KEY?", process.env.REACT_APP_SUPABASE_ANON_KEY);
   // ===== UI =====
   if (mode === "home") {
     return (
+      
       <div style={{ padding: 40, fontFamily: "Arial", maxWidth: 520 }}>
         <h1 style={{ marginBottom: 8 }}>My Mission</h1>
         <p style={{ marginTop: 0, opacity: 0.8 }}>בחר לאן להיכנס</p>
@@ -264,7 +265,13 @@ console.log("KEY?", process.env.REACT_APP_SUPABASE_ANON_KEY);
         <div style={{ marginTop: 18, fontSize: 12, opacity: 0.75 }}>
           Cloud: {supabase ? "מחובר (Supabase)" : "לא מוגדר עדיין (ENV חסר)"}
         </div>
+
+
+        <div style={{ marginTop: 6, fontSize: 12, opacity: 0.75 }}>
+        ENV URL: {String(envStatus?.hasUrl)} | ENV KEY: {String(envStatus?.hasKey)}
+    </div>
       </div>
+      
     );
   }
 
