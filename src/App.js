@@ -1,5 +1,6 @@
-import { supabase, envStatus } from "./supabaseClient";
+import TestSupabase from "./TestSupabase";
 import { useEffect, useMemo, useState } from "react";
+import { supabase, envStatus } from "./supabaseClient";
 
 // ===== Storage keys =====
 const SYSTEMS_KEY = "systemsList";
@@ -35,6 +36,8 @@ function makeKeyFromLabel(label) {
 
 export default function App() {
   
+  return <TestSupabase />;
+
   // screens: home / work / admin
   const [mode, setMode] = useState("home");
   
@@ -372,7 +375,14 @@ export default function App() {
         <div style={{ padding: 10, border: "1px solid #f99", marginTop: 10 }}>
           ⚠️ {cloudError}
         </div>
+        
+        
       ) : null}
+
+      <div style={{ marginTop: 8, fontSize: 12, opacity: 0.75 }}>
+  ENV URL: {String(envStatus?.hasUrl)} | ENV KEY: {String(envStatus?.hasKey)} | SUPABASE:{" "}
+  {supabase ? "OK" : "NULL"}
+</div>
 
       <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
         <input
