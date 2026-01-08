@@ -29,10 +29,19 @@ export default function TestSupabase() {
   }, []);
 
   return (
+
     <div style={{ padding: 40, fontFamily: "Arial" }}>
       <h2>בדיקת Supabase</h2>
       <p>{status}</p>
+
+      <p>
+     ENV URL: {String(process.env.REACT_APP_SUPABASE_URL ? true : false)} | ENV KEY:{" "}
+      {String(process.env.REACT_APP_SUPABASE_ANON_KEY ? true : false)}
+    </p>
+
       <pre>{JSON.stringify(rows, null, 2)}</pre>
     </div>
+
+    
   );
 }
