@@ -38,6 +38,14 @@ export default function TestSupabase() {
      ENV URL: {String(process.env.REACT_APP_SUPABASE_URL ? true : false)} | ENV KEY:{" "}
       {String(process.env.REACT_APP_SUPABASE_ANON_KEY ? true : false)}
     </p>
+<p>
+  VERCEL_ENV: {process.env.VERCEL_ENV || "n/a"} | VERCEL_URL:{" "}
+  {process.env.VERCEL_URL || "n/a"}
+</p>
+
+<p>
+  HAS_ANON_KEY: {String(Boolean(process.env.REACT_APP_SUPABASE_ANON_KEY))}
+</p>
 
       <pre>{JSON.stringify(rows, null, 2)}</pre>
     </div>
