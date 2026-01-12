@@ -1,4 +1,4 @@
-import TestSupabase from "./TestSupabase";
+
 import { useEffect, useMemo, useState } from "react";
 import { supabase, envStatus } from "./supabaseClient";
 
@@ -36,7 +36,7 @@ function makeKeyFromLabel(label) {
 
 export default function App() {
   
-  return <TestSupabase />;
+  //return <TestSupabase />;
 
   // screens: home / work / admin
   const [mode, setMode] = useState("home");
