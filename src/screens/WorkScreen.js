@@ -28,4 +28,3 @@ export default function WorkScreen({ systems, onSelect, onBack }) {
     </div>
   );
 }
-ד

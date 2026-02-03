@@ -7,19 +7,20 @@ import AdminScreen from "./screens/AdminScreen";
 import ItemsPage from "./features/items/ItemsPage";
 
 export default function App() {
-  // screens: home | work | admin | items
+  // home | work | admin | items
   const [mode, setMode] = useState("home");
 
-  // systems now come from DB as: { id, label, created_at }
+  // systems from DB: { id, label, created_at }
   const [systems, setSystems] = useState([]);
+
+  // selected system id
   const [selectedSystemId, setSelectedSystemId] = useState(null);
 
   const selectedSystem = useMemo(
-    () => systems.find((s) => s.id === selectedSystemId),
+    () => systems.find((s) => s.id === selectedSystemId) || null,
     [systems, selectedSystemId]
   );
 
-  // load systems from cloud
   useEffect(() => {
     const loadSystems = async () => {
       if (!supabase) {
@@ -45,7 +46,6 @@ export default function App() {
     loadSystems();
   }, []);
 
-  // navigation
   const goHome = () => {
     setMode("home");
     setSelectedSystemId(null);
@@ -59,7 +59,6 @@ export default function App() {
     setMode("items");
   };
 
-  // UI routing
   if (mode === "home") {
     return <HomeScreen onWork={openWork} onAdmin={openAdmin} />;
   }
