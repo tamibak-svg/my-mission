@@ -1,21 +1,21 @@
 import { useState } from "react";
 import { supabase } from "../../supabaseClient";
 
-export default function ItemForm({ systemKey, onAdd }) {
+export default function ItemForm({ systemId, onAdd }) {
   const [title, setTitle] = useState("");
   const [saving, setSaving] = useState(false);
 
-  const submit = async () => {
+  const add = async () => {
     const clean = title.trim();
     if (!clean) return;
 
-    if (!systemKey) {
-      alert("אין קטגוריה (systemKey). צא ובחר קטגוריה מחדש.");
+    if (!supabase) {
+      alert("Supabase לא מחובר (ENV חסר).");
       return;
     }
 
-    if (!supabase) {
-      alert("Supabase לא מחובר (ENV חסר).");
+    if (!systemId || Number.isNaN(Number(systemId))) {
+      alert("אין קטגוריה פעילה (systemId חסר).");
       return;
     }
 
@@ -23,15 +23,15 @@ export default function ItemForm({ systemKey, onAdd }) {
 
     const { data, error } = await supabase
       .from("items")
-      .insert([{ title: clean, system_key: systemKey, completed: false }])
+      .insert([{ system_id: systemId, title: clean }])
       .select("*")
       .single();
 
     setSaving(false);
 
     if (error) {
-      console.error("insert error:", error);
-      alert(error.message || "שגיאה בשמירה לענן");
+      console.error("insert item error:", error);
+      alert(error.message || "שגיאה בהוספת פריט");
       return;
     }
 
@@ -40,14 +40,14 @@ export default function ItemForm({ systemKey, onAdd }) {
   };
 
   return (
-    <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
+    <div style={{ display: "flex", gap: 10, margin: "12px 0" }}>
       <input
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        placeholder="משימה חדשה"
+        placeholder={`הוסף פריט ל: ${systemId}`}
         style={{ padding: 10, flex: 1 }}
       />
-      <button onClick={submit} disabled={saving} style={{ padding: 10 }}>
+      <button onClick={add} disabled={saving} style={{ padding: 10 }}>
         {saving ? "שומר..." : "הוסף"}
       </button>
     </div>

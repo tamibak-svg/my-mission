@@ -3,23 +3,28 @@ import { supabase } from "../../supabaseClient";
 import ItemForm from "./ItemForm";
 import ItemsList from "./ItemsList";
 
-export default function ItemsPage({ systemKey, systemLabel, onBack, onHome }) {
+export default function ItemsPage({ systemId, systemLabel, onBack, onHome }) {
   const [items, setItems] = useState([]);
   const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
     const load = async () => {
       setErrorMsg("");
+
       if (!supabase) {
         setErrorMsg("Supabase לא מחובר (ENV חסר).");
         return;
       }
-      if (!systemKey) return;
+
+      if (!systemId || Number.isNaN(Number(systemId))) {
+        setItems([]);
+        return;
+      }
 
       const { data, error } = await supabase
         .from("items")
         .select("*")
-        .eq("system_key", systemKey)
+        .eq("system_id", systemId)
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -33,7 +38,7 @@ export default function ItemsPage({ systemKey, systemLabel, onBack, onHome }) {
     };
 
     load();
-  }, [systemKey]);
+  }, [systemId]);
 
   return (
     <div style={{ padding: 40 }}>
@@ -43,13 +48,13 @@ export default function ItemsPage({ systemKey, systemLabel, onBack, onHome }) {
         <div style={{ marginTop: 10, padding: 10, border: "1px solid #f99" }}>
           ⚠️ {errorMsg}
         </div>
-        
       ) : null}
-<div style={{ fontSize: 12, opacity: 0.7 }}>
-  debug: systemKey = {String(systemKey)}
-</div>
 
-      <ItemForm systemKey={systemKey} onAdd={(item) => setItems((p) => [item, ...p])} />
+      <ItemForm
+        systemId={systemId}
+        onAdd={(item) => setItems((p) => [item, ...p])}
+      />
+
       <ItemsList items={items} />
 
       <div style={{ marginTop: 16, display: "flex", gap: 10 }}>

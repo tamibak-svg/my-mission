@@ -1,24 +1,31 @@
-import { useState } from "react";
-
-export default function WorkScreen({ systems, onEnter, onBack }) {
-  const [draft, setDraft] = useState(systems[0]?.key);
-
+export default function WorkScreen({ systems, onSelect, onBack }) {
   return (
     <div style={{ padding: 40 }}>
-      <h2>בחר קטגוריה</h2>
+      <h2 style={{ marginTop: 0 }}>בחר קטגוריה</h2>
 
-      <select value={draft} onChange={(e) => setDraft(e.target.value)}>
-        {systems.map((s) => (
-          <option key={s.key} value={s.key}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 12 }}>
+        {systems?.map((s) => (
+          <button
+            key={s.id}
+            onClick={() => onSelect(s.id)}
+            style={{
+              padding: 14,
+              textAlign: "right",
+              borderRadius: 10,
+              border: "1px solid #ddd",
+              background: "white",
+              cursor: "pointer",
+            }}
+          >
             {s.label}
-          </option>
+          </button>
         ))}
-      </select>
+      </div>
 
-      <br /><br />
-      <button onClick={() => onEnter(draft)}>כניסה</button>
-      <br /><br />
-      <button onClick={onBack}>חזרה</button>
+      <button onClick={onBack} style={{ marginTop: 18, padding: 10 }}>
+        חזרה למסך פתיחה
+      </button>
     </div>
   );
 }
+ד

@@ -1,59 +1,94 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "./supabaseClient";
+
 import HomeScreen from "./screens/HomeScreen";
 import WorkScreen from "./screens/WorkScreen";
 import AdminScreen from "./screens/AdminScreen";
 import ItemsPage from "./features/items/ItemsPage";
-import { DEFAULT_SYSTEMS } from "./lib/systems";
-console.log({ HomeScreen, WorkScreen, AdminScreen, ItemsPage });
 
 export default function App() {
-  const [mode, setMode] = useState("home"); // home | work | admin | items
-  const [systems, setSystems] = useState(DEFAULT_SYSTEMS);
-  const [systemKey, setSystemKey] = useState(null);
+  // screens: home | work | admin | items
+  const [mode, setMode] = useState("home");
 
-  const systemLabel = useMemo(
-    () => systems.find((s) => s.key === systemKey)?.label || "",
-    [systems, systemKey]
+  // systems now come from DB as: { id, label, created_at }
+  const [systems, setSystems] = useState([]);
+  const [selectedSystemId, setSelectedSystemId] = useState(null);
+
+  const selectedSystem = useMemo(
+    () => systems.find((s) => s.id === selectedSystemId),
+    [systems, selectedSystemId]
   );
 
+  // load systems from cloud
+  useEffect(() => {
+    const loadSystems = async () => {
+      if (!supabase) {
+        console.error("Supabase client missing (ENV?)");
+        setSystems([]);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("systems")
+        .select("id,label,created_at")
+        .order("id", { ascending: true });
+
+      if (error) {
+        console.error("load systems error:", error);
+        setSystems([]);
+        return;
+      }
+
+      setSystems(data || []);
+    };
+
+    loadSystems();
+  }, []);
+
+  // navigation
+  const goHome = () => {
+    setMode("home");
+    setSelectedSystemId(null);
+  };
+
+  const openWork = () => setMode("work");
+  const openAdmin = () => setMode("admin");
+
+  const openItems = (systemId) => {
+    setSelectedSystemId(systemId);
+    setMode("items");
+  };
+
+  // UI routing
   if (mode === "home") {
-    return (
-      <HomeScreen
-        onWork={() => setMode("work")}
-        onAdmin={() => setMode("admin")}
-      />
-    );
+    return <HomeScreen onWork={openWork} onAdmin={openAdmin} />;
   }
 
   if (mode === "admin") {
     return (
-      <AdminScreen
-        systems={systems}
-        setSystems={setSystems}
-        onBack={() => setMode("home")}
-      />
+      <AdminScreen systems={systems} setSystems={setSystems} onBack={goHome} />
     );
   }
 
   if (mode === "work") {
+    return <WorkScreen systems={systems} onSelect={openItems} onBack={goHome} />;
+  }
+
+  if (mode === "items" && selectedSystem) {
     return (
-      <WorkScreen
-        systems={systems}
-        onBack={() => setMode("home")}
-        onEnter={(key) => {
-          setSystemKey(key);
-          setMode("items");
-        }}
+      <ItemsPage
+        systemId={selectedSystem.id}
+        systemLabel={selectedSystem.label}
+        onBack={() => setMode("work")}
+        onHome={goHome}
       />
     );
   }
 
   return (
-    <ItemsPage
-      systemKey={systemKey}
-      systemLabel={systemLabel}
-      onBack={() => setMode("work")}
-      onHome={() => setMode("home")}
-    />
+    <div style={{ padding: 40 }}>
+      <h2>שגיאה בניווט</h2>
+      <button onClick={goHome}>חזרה למסך פתיחה</button>
+    </div>
   );
 }
