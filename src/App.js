@@ -3,7 +3,7 @@ import { supabase } from "./supabaseClient";
 import HomeScreen from "./screens/HomeScreen";
 import WorkScreen from "./screens/WorkScreen";
 import ItemsPage from "./features/items/ItemsPage";
-
+console.log("WEB BUILD 2026-02-15 V2");
 export default function App() {
   const [mode, setMode] = useState("home"); // home | work | items
   const [systems, setSystems] = useState([]);
@@ -13,12 +13,13 @@ export default function App() {
 
   useEffect(() => {
     loadSystems();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function loadSystems() {
     if (!supabase) return;
 
-    // 1️⃣ טען systems
+    // 1) טען systems
     const { data, error } = await supabase
       .from("systems")
       .select("*")
@@ -31,7 +32,7 @@ export default function App() {
 
     setSystems(data || []);
 
-    // 2️⃣ טען ספירת משימות פתוחות לכל system
+    // 2) טען ספירת "לא טופלו" לכל system
     const { data: itemsData, error: itemsErr } = await supabase
       .from("items")
       .select("system_id, completed, is_deleted");
@@ -65,6 +66,8 @@ export default function App() {
     setCurrentSystemLabel(system?.label || "");
     setMode("items");
   }
+
+  // ----- Render -----
 
   if (mode === "home") {
     return <HomeScreen onWork={goWork} />;
