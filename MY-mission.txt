@@ -26,6 +26,10 @@ git add -A
 git commit -m "..."
 git push
 
+git add .
+git commit -m "update tasks system"
+git push
+
 
 בודק ב־Vercel
 
