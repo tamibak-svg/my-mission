@@ -6,6 +6,8 @@ import ItemsList from "./ItemsList";
 export default function ItemsPage({ systemId, systemLabel, onBack, onHome }) {
   const [items, setItems] = useState([]);
   const [errorMsg, setErrorMsg] = useState("");
+  const [openItem, setOpenItem] = useState(null);
+  const [editTitle, setEditTitle] = useState("");
 
   useEffect(() => {
     const load = async () => {
@@ -40,6 +42,32 @@ export default function ItemsPage({ systemId, systemLabel, onBack, onHome }) {
     load();
   }, [systemId]);
 
+  const open = (it) => {
+    setOpenItem(it);
+    setEditTitle(it.title || "");
+  };
+
+  const saveTitle = async () => {
+    if (!openItem) return;
+    const clean = editTitle.trim();
+    if (!clean) return;
+
+    const { data, error } = await supabase
+      .from("items")
+      .update({ title: clean })
+      .eq("id", openItem.id)
+      .select("*")
+      .single();
+
+    if (error) {
+      alert(error.message || "שגיאה בשמירה");
+      return;
+    }
+
+    setItems((prev) => prev.map((x) => (x.id === data.id ? data : x)));
+    setOpenItem(data);
+  };
+
   return (
     <div style={{ padding: 40 }}>
       <h2>{systemLabel || "קטגוריה"}</h2>
@@ -55,7 +83,40 @@ export default function ItemsPage({ systemId, systemLabel, onBack, onHome }) {
         onAdd={(item) => setItems((p) => [item, ...p])}
       />
 
-      <ItemsList items={items} />
+      {/* “כניסה למשימה” */}
+      <ItemsList items={items} onOpen={open} />
+
+      {/* פאנל פרטים/עריכה */}
+      {openItem ? (
+        <div
+          style={{
+            marginTop: 18,
+            padding: 12,
+            border: "1px solid #ddd",
+            borderRadius: 10,
+            maxWidth: 720,
+          }}
+        >
+          <div style={{ fontWeight: 700, marginBottom: 8 }}>פרטי משימה</div>
+          <div style={{ fontSize: 12, opacity: 0.7, marginBottom: 10 }}>
+            id: {openItem.id} • נוצר: {openItem.created_at || "—"}
+          </div>
+
+          <div style={{ display: "flex", gap: 10 }}>
+            <input
+              value={editTitle}
+              onChange={(e) => setEditTitle(e.target.value)}
+              style={{ padding: 10, flex: 1 }}
+            />
+            <button onClick={saveTitle} style={{ padding: 10 }}>
+              שמור
+            </button>
+            <button onClick={() => setOpenItem(null)} style={{ padding: 10 }}>
+              סגור
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       <div style={{ marginTop: 16, display: "flex", gap: 10 }}>
         <button onClick={onBack}>החלף קטגוריה</button>

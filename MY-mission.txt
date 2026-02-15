@@ -1,0 +1,161 @@
+Ctrl + C
+npm start
+
+git add -A
+git commit -m "Switch systems/items to numeric IDs (system_id)"
+git push
+
+npm run build
+
+אחרי כל שינוי משמעותי שעובד בלוקאל:
+
+בודק לוקאל
+
+npm start
+
+
+בודק build
+
+npm run build
+
+
+דוחף
+
+git status
+git add -A
+git commit -m "..."
+git push
+
+
+בודק ב־Vercel
+
+Build ירוק
+
+Network תואם למה שאתה מצפה
+
+זהו.
+אם משהו מוזר קורה — כמעט תמיד אחד מארבעת השלבים האלה לא בוצע.
+
+
+שפת אינטרפייס
+שפת אינטרפייס – המילון שלנו
+1) מסכים (Screens)
+
+כל מסך הוא “מקום” עם מטרה אחת.
+
+שם מסך
+
+מטרה
+
+מה רואים
+
+פעולות
+
+לאן זה מוביל
+
+דוגמה: Home, Login, PickSystem, Items.
+
+2) רכיבים (Components)
+
+חתיכות UI שחוזרות.
+
+כפתור, טבלה, כרטיס, דרופדאון, שדה טקסט, טאבים, פילטר.
+
+3) ישויות (Entities)
+
+מה אנחנו מנהלים בעולם של האפליקציה.
+
+User
+
+Group
+
+System (קטגוריה/תחום: משימות/רכישות/חובות…)
+
+Item (משימה/רכישה/חוב… תלוי במערכת)
+
+4) שדות (Fields)
+
+כל ישות מקבלת שדות, עם סוגים ברורים:
+
+text, textarea, number, date, select, checkbox, status, priority
+
+5) מצבים (States)
+
+איך פריט נראה לפי מצב:
+
+חדש / פתוח / בוצע / מושהה / בוטל
+
+דחיפות: נמוכה/בינונית/גבוהה
+
+6) חוקים (Rules)
+
+דברים שחייבים לקרות:
+
+“פריט חייב להיות משויך לקטגוריה”
+
+“מיון ברירת מחדל: לא בוצע קודם”
+
+“הרשאות: משתמש רואה רק את שלו”
+
+7) זרימות (Flows)
+
+תנועה בין מסכים:
+
+Login → Home → PickSystem → ItemsList → ItemDetails
+
+התבנית הקבועה (Interface Spec) — זה הפרומפט שלך לכל פלטפורמה
+
+העתק את זה כבלוק קבוע, וממלאים רק את התוכן:
+
+App Name:
+Goal (1 sentence):
+
+Entities
+
+User: …
+
+Group: …
+
+System: …
+
+Item: …
+
+Screens
+
+Screen: …
+
+Purpose:
+
+Shows:
+
+Actions:
+
+Navigates to:
+
+Screen: …
+
+Item fields (for System=Tasks)
+
+title (text)
+
+details (textarea)
+
+priority (select: low/med/high)
+
+status (select: open/done/paused)
+
+due_date (date)
+
+Sorting / Filtering defaults
+
+Default sort:
+
+Filters:
+
+Rules
+
+…
+
+Nice-to-have (later)
+
+…
